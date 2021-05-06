@@ -1,0 +1,10 @@
+[package]
+name = "maui"
+version = "0.0.0"
+edition = "2018"
+authors = ["Nylonicious"]
+license = "MIT"
+repository = "https://github.com/nylonicious/maui"
+description = "Reserved for future use."
+
+[dependencies]
