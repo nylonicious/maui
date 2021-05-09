@@ -8,7 +8,7 @@ use crate::{
     Connection, Error, Request,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Client {
     event_tx: broadcast::Sender<Event>,
     request_tx: mpsc::UnboundedSender<Request>,
