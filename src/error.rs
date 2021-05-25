@@ -47,6 +47,18 @@ impl Error {
         Error::new(ErrorKind::Status(code), None::<Error>)
     }
 
+    pub fn is_connection_lost(&self) -> bool {
+        matches!(self.inner.kind, ErrorKind::ConnectionLost)
+    }
+
+    pub fn is_io(&self) -> bool {
+        matches!(self.inner.kind, ErrorKind::Io)
+    }
+
+    pub fn is_parse(&self) -> bool {
+        matches!(self.inner.kind, ErrorKind::Parse)
+    }
+
     pub fn is_status(&self) -> bool {
         matches!(self.inner.kind, ErrorKind::Status(_))
     }
