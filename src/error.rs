@@ -90,7 +90,11 @@ impl fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        self.inner.source.as_ref().map(|e| &**e as _)
+    }
+}
 
 impl From<io::Error> for Error {
     fn from(e: io::Error) -> Error {
