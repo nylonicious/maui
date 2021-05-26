@@ -21,7 +21,7 @@ mod connection;
 pub(crate) use self::connection::{Connection, Request};
 
 mod error;
-pub use self::error::{Error, Result};
+pub use self::error::{Error, ErrorKind, Result};
 
 pub mod models;
 
