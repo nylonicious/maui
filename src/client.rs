@@ -95,21 +95,21 @@ impl Client {
             .await?
             .into_iter();
 
-        let offset: usize = next!(words).parse().map_err(Error::new_parse)?;
+        let offset: usize = next_parse!(words);
         words.nth(offset - 1);
-        let num_of_players: usize = next!(words).parse().map_err(Error::new_parse)?;
+        let num_of_players: usize = next_parse!(words);
         let mut players = Vec::with_capacity(num_of_players);
         for _ in 0..num_of_players {
             players.push(PlayerInfo {
                 name: next!(words),
                 guid: next!(words),
-                team_id: next!(words).parse().map_err(Error::new_parse)?,
-                squad_id: next!(words).parse().map_err(Error::new_parse)?,
-                kills: next!(words).parse().map_err(Error::new_parse)?,
-                deaths: next!(words).parse().map_err(Error::new_parse)?,
-                score: next!(words).parse().map_err(Error::new_parse)?,
-                rank: next!(words).parse().map_err(Error::new_parse)?,
-                ping: next!(words).parse().map_err(Error::new_parse)?,
+                team_id: next_parse!(words),
+                squad_id: next_parse!(words),
+                kills: next_parse!(words),
+                deaths: next_parse!(words),
+                score: next_parse!(words),
+                rank: next_parse!(words),
+                ping: next_parse!(words),
                 kind: next!(words).parse()?,
             });
         }

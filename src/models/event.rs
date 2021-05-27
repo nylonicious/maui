@@ -84,31 +84,31 @@ impl Event {
             }),
             "player.onLeave" => {
                 next!(words);
-                let offset: usize = next!(words).parse().map_err(Error::new_parse)?;
+                let offset: usize = next_parse!(words);
                 words.nth(offset);
 
                 Ok(Event::PlayerOnLeave(PlayerInfo {
                     name: next!(words),
                     guid: next!(words),
-                    team_id: next!(words).parse().map_err(Error::new_parse)?,
-                    squad_id: next!(words).parse().map_err(Error::new_parse)?,
-                    kills: next!(words).parse().map_err(Error::new_parse)?,
-                    deaths: next!(words).parse().map_err(Error::new_parse)?,
-                    score: next!(words).parse().map_err(Error::new_parse)?,
-                    rank: next!(words).parse().map_err(Error::new_parse)?,
-                    ping: next!(words).parse().map_err(Error::new_parse)?,
-                    kind: next!(words).parse().map_err(Error::new_parse)?,
+                    team_id: next_parse!(words),
+                    squad_id: next_parse!(words),
+                    kills: next_parse!(words),
+                    deaths: next_parse!(words),
+                    score: next_parse!(words),
+                    rank: next_parse!(words),
+                    ping: next_parse!(words),
+                    kind: next_parse!(words),
                 }))
             }
             "player.onSpawn" => Ok(Event::PlayerOnSpawn {
                 name: next!(words),
-                team_id: next!(words).parse().map_err(Error::new_parse)?,
+                team_id: next_parse!(words),
             }),
             "player.onKill" => Ok(Event::PlayerOnKill {
                 killer: next!(words),
                 victim: next!(words),
                 weapon: next!(words),
-                headshot: next!(words).parse().map_err(Error::new_parse)?,
+                headshot: next_parse!(words),
             }),
             "player.onChat" => {
                 let source = next!(words);
@@ -117,11 +117,11 @@ impl Event {
                 let subset = match next!(words).as_ref() {
                     "all" => Subset::All,
                     "team" => Subset::Team {
-                        team_id: next!(words).parse().map_err(Error::new_parse)?,
+                        team_id: next_parse!(words),
                     },
                     "squad" => Subset::Squad {
-                        team_id: next!(words).parse().map_err(Error::new_parse)?,
-                        squad_id: next!(words).parse().map_err(Error::new_parse)?,
+                        team_id: next_parse!(words),
+                        squad_id: next_parse!(words),
                     },
                     "player" => Subset::Player { name: next!(words) },
                     other => {
@@ -140,66 +140,66 @@ impl Event {
             }
             "player.onSquadChange" => Ok(Event::PlayerOnSquadChange {
                 name: next!(words),
-                team_id: next!(words).parse().map_err(Error::new_parse)?,
-                squad_id: next!(words).parse().map_err(Error::new_parse)?,
+                team_id: next_parse!(words),
+                squad_id: next_parse!(words),
             }),
             "player.onTeamChange" => Ok(Event::PlayerOnTeamChange {
                 name: next!(words),
-                team_id: next!(words).parse().map_err(Error::new_parse)?,
-                squad_id: next!(words).parse().map_err(Error::new_parse)?,
+                team_id: next_parse!(words),
+                squad_id: next_parse!(words),
             }),
             "punkBuster.onMessage" => Ok(Event::PunkBusterOnMessage {
                 message: next!(words),
             }),
             "server.onRoundOverPlayers" => {
-                let offset: usize = next!(words).parse().map_err(Error::new_parse)?;
+                let offset: usize = next_parse!(words);
                 words.nth(offset - 1);
 
-                let num_of_players: usize = next!(words).parse().map_err(Error::new_parse)?;
+                let num_of_players: usize = next_parse!(words);
                 let mut players = Vec::with_capacity(num_of_players);
                 for _ in 0..num_of_players {
                     players.push(PlayerInfo {
                         name: next!(words),
                         guid: next!(words),
-                        team_id: next!(words).parse().map_err(Error::new_parse)?,
-                        squad_id: next!(words).parse().map_err(Error::new_parse)?,
-                        kills: next!(words).parse().map_err(Error::new_parse)?,
-                        deaths: next!(words).parse().map_err(Error::new_parse)?,
-                        score: next!(words).parse().map_err(Error::new_parse)?,
-                        rank: next!(words).parse().map_err(Error::new_parse)?,
-                        ping: next!(words).parse().map_err(Error::new_parse)?,
-                        kind: next!(words).parse().map_err(Error::new_parse)?,
+                        team_id: next_parse!(words),
+                        squad_id: next_parse!(words),
+                        kills: next_parse!(words),
+                        deaths: next_parse!(words),
+                        score: next_parse!(words),
+                        rank: next_parse!(words),
+                        ping: next_parse!(words),
+                        kind: next_parse!(words),
                     })
                 }
 
                 Ok(Event::ServerOnRoundOverPlayers(players))
             }
             "server.onRoundOverTeamScores" => {
-                let num_of_teams: usize = next!(words).parse().map_err(Error::new_parse)?;
+                let num_of_teams: usize = next_parse!(words);
 
                 let mut team_scores = Vec::with_capacity(num_of_teams);
                 for _ in 0..num_of_teams {
-                    let team_score = next!(words).parse().map_err(Error::new_parse)?;
+                    let team_score = next_parse!(words);
                     team_scores.push(team_score);
                 }
 
                 Ok(Event::ServerOnRoundOverTeamScores {
                     num_of_teams,
                     team_scores,
-                    target_score: next!(words).parse().map_err(Error::new_parse)?,
+                    target_score: next_parse!(words),
                 })
             }
             "server.onLevelLoaded" => Ok(Event::ServerOnLevelLoaded {
                 map: next!(words),
                 gamemode: next!(words),
-                rounds_played: next!(words).parse().map_err(Error::new_parse)?,
-                rounds_total: next!(words).parse().map_err(Error::new_parse)?,
+                rounds_played: next_parse!(words),
+                rounds_total: next_parse!(words),
             }),
             "server.onRoundOver" => Ok(Event::ServerOnRoundOver {
-                team_id: next!(words).parse().map_err(Error::new_parse)?,
+                team_id: next_parse!(words),
             }),
             "server.onMaxPlayerCountChange" => Ok(Event::ServerOnMaxPlayerCountChange {
-                count: next!(words).parse().map_err(Error::new_parse)?,
+                count: next_parse!(words),
             }),
             other => Err(Error::new_parse(format!("invalid event: {}", other))),
         }

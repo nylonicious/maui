@@ -39,17 +39,17 @@ impl ServerInfo {
         let mut words = words.into_iter();
 
         let name = next!(words);
-        let player_count = next!(words).parse().map_err(Error::new_parse)?;
-        let max_player_count = next!(words).parse().map_err(Error::new_parse)?;
+        let player_count = next_parse!(words);
+        let max_player_count = next_parse!(words);
         let game_mode = next!(words);
         let map = next!(words);
-        let rounds_played = next!(words).parse().map_err(Error::new_parse)?;
-        let rounds_total = next!(words).parse().map_err(Error::new_parse)?;
-        let num_of_teams: usize = next!(words).parse().map_err(Error::new_parse)?;
+        let rounds_played = next_parse!(words);
+        let rounds_total = next_parse!(words);
+        let num_of_teams: usize = next_parse!(words);
 
         let mut team_scores = Vec::with_capacity(num_of_teams);
         for _ in 0..num_of_teams {
-            let team_score = next!(words).parse().map_err(Error::new_parse)?;
+            let team_score = next_parse!(words);
             team_scores.push(team_score);
         }
 
@@ -63,20 +63,20 @@ impl ServerInfo {
             rounds_total,
             num_of_teams,
             team_scores,
-            target_score: next!(words).parse().map_err(Error::new_parse)?,
+            target_score: next_parse!(words),
             online_state: next!(words),
-            ranked: next!(words).parse().map_err(Error::new_parse)?,
-            punkbuster: next!(words).parse().map_err(Error::new_parse)?,
-            game_password: next!(words).parse().map_err(Error::new_parse)?,
-            uptime: next!(words).parse().map_err(Error::new_parse)?,
-            round_time: next!(words).parse().map_err(Error::new_parse)?,
-            addr: next!(words).parse().map_err(Error::new_parse)?,
+            ranked: next_parse!(words),
+            punkbuster: next_parse!(words),
+            game_password: next_parse!(words),
+            uptime: next_parse!(words),
+            round_time: next_parse!(words),
+            addr: next_parse!(words),
             punkbuster_version: next!(words),
-            join_queue: next!(words).parse().map_err(Error::new_parse)?,
+            join_queue: next_parse!(words),
             region: next!(words),
             ping_site: next!(words),
             country: next!(words),
-            blaze_player_count: next!(words).parse().map_err(Error::new_parse)?,
+            blaze_player_count: next_parse!(words),
             blaze_game_state: next!(words),
         })
     }

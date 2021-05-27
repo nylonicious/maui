@@ -7,10 +7,19 @@
 )]
 #![forbid(unsafe_code)]
 
-#[macro_use]
 macro_rules! next {
     ($iter:expr) => {
         $iter.next().ok_or(Error::new_parse("unexpected eof"))?
+    };
+}
+
+macro_rules! next_parse {
+    ($iter:expr) => {
+        $iter
+            .next()
+            .ok_or(Error::new_parse("unexpected eof"))?
+            .parse()
+            .map_err(Error::new_parse)?
     };
 }
 
