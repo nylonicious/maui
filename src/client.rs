@@ -110,7 +110,7 @@ impl Client {
                 score: next_parse!(words),
                 rank: next_parse!(words),
                 ping: next_parse!(words),
-                kind: next!(words).parse()?,
+                kind: next_parse!(words),
             });
         }
 
