@@ -116,4 +116,40 @@ impl Client {
 
         Ok(players)
     }
+
+    pub async fn move_player(
+        &self,
+        name: String,
+        team_id: usize,
+        squad_id: usize,
+        force_kill: bool,
+    ) -> Result<(), Error> {
+        self.send(vec![
+            "admin.movePlayer".to_owned(),
+            name,
+            team_id.to_string(),
+            squad_id.to_string(),
+            force_kill.to_string(),
+        ])
+        .await?;
+
+        Ok(())
+    }
+
+    pub async fn kill_player(&self, name: String) -> Result<(), Error> {
+        self.send(vec!["admin.killPlayer".to_owned(), name]).await?;
+
+        Ok(())
+    }
+
+    pub async fn kick_player(&self, name: String, reason: Option<String>) -> Result<(), Error> {
+        self.send(vec![
+            "admin.kickPlayer".to_owned(),
+            name,
+            reason.unwrap_or_default(),
+        ])
+        .await?;
+
+        Ok(())
+    }
 }
