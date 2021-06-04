@@ -70,6 +70,13 @@ impl fmt::Debug for Error {
 
         builder.field("kind", &self.inner.kind);
 
+        if self.inner.kind == ErrorKind::Status {
+            builder.field(
+                "status",
+                self.inner.status.as_ref().unwrap_or_else(|| unreachable!()),
+            );
+        }
+
         if let Some(ref source) = self.inner.source {
             builder.field("source", source);
         }
@@ -84,7 +91,10 @@ impl fmt::Display for Error {
             ErrorKind::ConnectionLost => f.write_str("connection lost")?,
             ErrorKind::Io => f.write_str("io error")?,
             ErrorKind::Parse => f.write_str("parse error")?,
-            ErrorKind::Status => write!(f, "RCON status error ({})", self.status().unwrap())?,
+            ErrorKind::Status => match self.status() {
+                Some(status) => write!(f, "RCON status error ({})", status)?,
+                None => unreachable!(),
+            },
         };
 
         if let Some(ref source) = self.inner.source {
