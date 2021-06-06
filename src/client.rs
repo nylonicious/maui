@@ -4,7 +4,7 @@ use tokio::{
 };
 
 use crate::{
-    models::{Event, PlayerInfo, ServerInfo},
+    models::{Event, PlayerInfo, ServerInfo, Subset},
     Connection, Error, Request,
 };
 
@@ -115,6 +115,24 @@ impl Client {
         }
 
         Ok(players)
+    }
+
+    pub async fn say(&self, message: String, subset: Subset) -> Result<(), Error> {
+        let mut words = vec!["admin.say".to_owned(), message];
+        words.extend(subset.into_words());
+
+        self.send(words).await?;
+
+        Ok(())
+    }
+
+    pub async fn yell(&self, message: String, duration: u64, subset: Subset) -> Result<(), Error> {
+        let mut words = vec!["admin.yell".to_owned(), message, duration.to_string()];
+        words.extend(subset.into_words());
+
+        self.send(words).await?;
+
+        Ok(())
     }
 
     pub async fn move_player(
