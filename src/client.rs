@@ -67,14 +67,14 @@ impl Client {
         Ok(())
     }
 
-    pub async fn enable_events(&self) -> Result<(), Error> {
+    pub async fn events_enable(&self) -> Result<(), Error> {
         self.send(vec!["admin.eventsEnabled".to_owned(), true.to_string()])
             .await?;
 
         Ok(())
     }
 
-    pub async fn disable_events(&self) -> Result<(), Error> {
+    pub async fn events_disable(&self) -> Result<(), Error> {
         self.send(vec!["admin.eventsEnabled".to_owned(), false.to_string()])
             .await?;
 
@@ -89,7 +89,7 @@ impl Client {
     }
 
     /// Returns list of all players currently on the server.
-    pub async fn get_players(&self) -> Result<Vec<PlayerInfo>, Error> {
+    pub async fn players_get(&self) -> Result<Vec<PlayerInfo>, Error> {
         let mut words = self
             .send(vec!["admin.listPlayers".to_owned(), "all".to_owned()])
             .await?
@@ -135,7 +135,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn move_player(
+    pub async fn players_move(
         &self,
         name: String,
         team_id: usize,
@@ -154,19 +154,110 @@ impl Client {
         Ok(())
     }
 
-    pub async fn kill_player(&self, name: String) -> Result<(), Error> {
+    pub async fn players_kill(&self, name: String) -> Result<(), Error> {
         self.send(vec!["admin.killPlayer".to_owned(), name]).await?;
 
         Ok(())
     }
 
-    pub async fn kick_player(&self, name: String, reason: Option<String>) -> Result<(), Error> {
+    pub async fn players_kick(&self, name: String, reason: Option<String>) -> Result<(), Error> {
         self.send(vec![
             "admin.kickPlayer".to_owned(),
             name,
             reason.unwrap_or_default(),
         ])
         .await?;
+
+        Ok(())
+    }
+
+    pub async fn maps_get(&self) -> Result<Vec<(String, String, usize)>, Error> {
+        let mut maps = Vec::new();
+        let mut offset: usize = 0;
+        let mut words = self
+            .send(vec!["mapList.list".to_owned(), offset.to_string()])
+            .await?
+            .into_iter();
+
+        loop {
+            let num_of_maps: usize = next_parse!(words);
+            assert_eq!(next!(words), "3");
+            maps.reserve(num_of_maps);
+
+            for _ in 0..num_of_maps {
+                maps.push((next!(words), next!(words), next_parse!(words)));
+            }
+
+            if num_of_maps >= 100 {
+                offset += 100;
+            } else {
+                return Ok(maps);
+            }
+        }
+    }
+
+    pub async fn maps_remove(&self, index: usize) -> Result<(), Error> {
+        self.send(vec!["mapList.remove".to_owned(), index.to_string()])
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn maps_clear(&self) -> Result<(), Error> {
+        self.send(vec!["mapList.clear".to_owned()]).await?;
+
+        Ok(())
+    }
+
+    pub async fn maps_load(&self) -> Result<(), Error> {
+        self.send(vec!["mapList.load".to_owned()]).await?;
+
+        Ok(())
+    }
+
+    pub async fn maps_save(&self) -> Result<(), Error> {
+        self.send(vec!["mapList.save".to_owned()]).await?;
+
+        Ok(())
+    }
+
+    pub async fn maps_get_indexes(&self) -> Result<(usize, usize), Error> {
+        let mut words = self
+            .send(vec!["mapList.getMapIndices".to_owned()])
+            .await?
+            .into_iter();
+
+        Ok((next_parse!(words), next_parse!(words)))
+    }
+
+    pub async fn maps_set_next_index(&self, index: usize) -> Result<(), Error> {
+        self.send(vec![
+            "mapList.setNextMapIndex".to_owned(),
+            index.to_string(),
+        ])
+        .await?;
+
+        Ok(())
+    }
+
+    /// Ends the current round, declaring specified team as the winner.
+    pub async fn maps_end_round(&self, team_id: usize) -> Result<(), Error> {
+        self.send(vec!["mapList.endRound".to_owned(), team_id.to_string()])
+            .await?;
+
+        Ok(())
+    }
+
+    /// Restarts the current round, without going through end screen.
+    pub async fn maps_restart_round(&self) -> Result<(), Error> {
+        self.send(vec!["mapList.restartRound".to_owned()]).await?;
+
+        Ok(())
+    }
+
+    /// Runs the next round, without going through end screen.
+    pub async fn maps_run_next_round(&self) -> Result<(), Error> {
+        self.send(vec!["mapList.runNextRound".to_owned()]).await?;
 
         Ok(())
     }
